@@ -1,0 +1,81 @@
+@extends('site.inner')
+
+@section('title')
+  {!! $category->title !!}
+@endsection
+
+@section('breadcrumb')
+    {{ breadcrumb() }}
+@endsection
+
+{{-- @section('page_title')
+    {!! $category->title !!}
+@endsection --}}
+
+@section('page_content')
+
+<div class="about-page main-container container-fluid  bg-white">
+  <div class="col-12">
+
+    <div class="row mx-0">
+      <div class="col-lg-12 px-0 my-2 page-content">
+
+        <div class="row mx-0">
+          <div class="col-12 px-0 py-1 border-bottom-faded">
+            <h5 class="pl-0  text-uppercase "> 
+                <div class="d-block  py-1    lines position-relative">
+                  <div class="pr-sm-2 py-1 text-primary  position-relative"> 
+                    <span class="border-left-primary text-bold  pl-1 ">
+                        <span class="border-left-secondary-thick pl-2">{!! $category->title !!}</span> 
+                    </span>
+                  </div>
+                </div>                
+            </h5>   
+          </div>
+          <div class="col-12 px-0">
+            <div class="pb-3 rich-text">
+              {!! nl2br($category->summary) !!}
+            </div>
+            <div class="col-12 px-0">
+
+              @if(count($members))
+                  @foreach ($members as $group)
+
+                    <div class="row mx-0 my-3 justify-content-center border-bottom">
+                      @foreach ($group as $member)
+                        
+                        <div class="col-12 col-sm-6 col-md-3 text-center py-3">
+                            <a href="{!! url('administration/'.$category->slug.'/'.$member->member->slug) !!}" title="{{ label('lbl_view').' '.label('lbl_biography') }}" class="d-block w-100 border members-link-hover"> 
+                                <div class="text-center">
+                                  <img src="{{asset('uploads/administration/'.$member->member->photo_url)}}" alt="{{$member->member->fullname.' photo'}}"
+                                    class="img-fluid" style="width:100%; max-width:200px">
+                                </div>                
+                                <div class="py-2 border-top">
+                                  <h6 class="text-bold text-primary">{!! $member->member->salutation.' '.$member->member->fullname !!}</h6> 
+                                  <p class="text-faded mb-1 bold-600">{!! $member->title !!}</p>
+                                </div>                  
+                            </a>
+                        </div>
+
+                      @endforeach
+                    </div>
+
+                  @endforeach
+              @else
+                <div class="col-12 px-0 py-3 bold-600">
+                  {{label('lbl_no_information')}}
+                </div>
+              @endif
+
+            </div>
+          </div>          
+        </div>
+
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+
+@stop
