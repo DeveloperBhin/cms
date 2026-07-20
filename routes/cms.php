@@ -275,3 +275,34 @@ Route::middleware(['auth','checked','cors'])->prefix('cms')->name('cms.')->group
 });
 
 Route::get('language/{lang}', 'cms\LanguageController@change');
+// Route::get('/chart-uploads', [cms\ChartUploadController::class, 'index']);
+// Route::prefix('chart-uploads')->group(function () {
+//     Route::get('/', [ChartUploadController::class, 'index'])->name('chart_uploads.index');
+//     Route::get('/create', [ChartUploadController::class, 'create'])->name('chart_uploads.create');
+//     Route::post('/store', [ChartUploadController::class, 'store'])->name('chart_uploads.store');
+//     Route::get('/edit/{id}', [ChartUploadController::class, 'edit'])->name('chart_uploads.edit');
+//     Route::post('/update/{id}', [ChartUploadController::class, 'update'])->name('chart_uploads.update');
+//     Route::delete('/delete/{id}', [ChartUploadController::class, 'destroy'])->name('chart_uploads.destroy');
+// });
+Route::get('cms/chart-uploads', function () {
+    return view('chart_uploads.index');
+})->name('chart_uploads.index');
+
+Route::prefix('chart-uploads')->group(function () {
+
+    Route::get('/', [
+        'uses' => 'cms\ChartUploadController@index',
+        'as' => 'chart_uploads.index',
+    ]);
+
+    Route::get('/create', [
+        'uses' => 'cms\ChartUploadController@create',
+        'as' => 'chart_uploads.create',
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'cms\ChartUploadController@store',
+        'as' => 'chart_uploads.store',
+    ]);
+
+});

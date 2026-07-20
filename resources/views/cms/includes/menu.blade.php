@@ -233,6 +233,9 @@
   </li>
   @endif
 
+  
+  
+
 
   @if(permission(['*.pages.*']))
    <li data-username="pages" class="nav-item @php activeLink(['pages']) @endphp">
@@ -243,6 +246,18 @@
    </li>
    @endif
 
+   {{-- @if(permission('*. .*')) --}}
+
+
+   <li data-username="chart uploads" class="nav-item @php activeLink(['chart-uploads']) @endphp">
+    <a href="{{ route('chart_uploads.index') }}" class="nav-link">
+        <span class="site-micon">
+            <i class="feather icon-upload"></i>
+        </span>
+        <span class="site-mtext">Chart Uploads</span>
+    </a>
+</li>
+  {{-- @endif --}}
 
   @if(permission('*.menu.*'))
     <li class="nav-item site-menu-caption">
