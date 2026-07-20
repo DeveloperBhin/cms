@@ -28,79 +28,94 @@ class ChartUploadController extends Controller
         return view('cms.chart_uploads.create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'file' => 'required|file'
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'title' => 'required',
+        'file' => 'required|file|mimes:pdf'
+    ]);
 
-        $filename = null;
+    $filename = null;
 
-        if ($request->hasFile('file')) {
-            $filename = time().'_'.$request->file('file')->getClientOriginalName();
+    if ($request->hasFile('file')) {
 
-            $request->file('file')->move(
-                public_path('uploads/chart_uploads'),
-                $filename
-            );
-        }
+        $filename = time().'_'.$request->file('file')->getClientOriginalName();
 
-        ChartUpload::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'file' => $filename,
-            'file_type' => $request->file('file')->getClientOriginalExtension()
-        ]);
-
-        return redirect()->route('chart_uploads.index')
-            ->with('success', 'Chart uploaded successfully.');
+        $request->file('file')->move(
+            public_path('uploads/chart_uploads'),
+            $filename
+        );
     }
 
-    public function edit($id)
-    {
-        $upload = ChartUpload::findOrFail($id);
+    ChartUpload::create([
+        'title' => $request->title,
+        'description' => $request->description,
+        'file' => 'uploads/chart_uploads/'.$filename,
+        'file_type' => 'pdf',
+        'status' => 1
+    ]);
 
-        return view('chart_uploads.edit', compact('upload'));
+    return redirect()
+        ->route('chart_uploads.index')
+        ->with('success', 'PDF uploaded successfully');
+}
+
+   public function edit($id)
+{
+    $upload = ChartUpload::findOrFail($id);
+
+    return view('cms.chart_uploads.edit', compact('upload'));
+}
+
+
+public function update(Request $request, $id)
+{
+    $upload = ChartUpload::findOrFail($id);
+
+    $request->validate([
+        'title' => 'required',
+        'description' => 'nullable',
+        'file' => 'nullable|mimes:pdf|max:10240',
+    ]);
+
+    $upload->title = $request->title;
+    $upload->description = $request->description;
+
+    if ($request->hasFile('file')) {
+
+        $file = $request->file('file');
+
+        $filename = time().'_'.$file->getClientOriginalName();
+
+        $file->move(public_path('uploads/chart_uploads'), $filename);
+
+        $upload->file = 'uploads/chart_uploads/'.$filename;
+        $upload->file_type = 'pdf';
     }
 
-    public function update(Request $request, $id)
-    {
-        $upload = ChartUpload::findOrFail($id);
+    $upload->save();
 
-        $filename = $upload->file;
+    return redirect()
+        ->route('chart_uploads.index')
+        ->with('success', 'Chart PDF updated successfully');
+}
 
-        if ($request->hasFile('file')) {
-            $filename = time().'_'.$request->file('file')->getClientOriginalName();
+public function destroy($id)
+{
+    $upload = ChartUpload::findOrFail($id);
 
-            $request->file('file')->move(
-                public_path('uploads/chart_uploads'),
-                $filename
-            );
-        }
-
-        $upload->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'file' => $filename
-        ]);
-
-        return redirect()->route('chart_uploads.index')
-            ->with('success', 'Chart updated successfully.');
+    // Delete PDF file from storage
+    if ($upload->file && file_exists(public_path($upload->file))) {
+        unlink(public_path($upload->file));
     }
 
-    public function destroy($id)
-    {
-        $upload = ChartUpload::findOrFail($id);
+    // Delete database record
+    $upload->delete();
 
-        if (file_exists(public_path('uploads/chart_uploads/'.$upload->file))) {
-            unlink(public_path('uploads/chart_uploads/'.$upload->file));
-        }
-
-        $upload->delete();
-
-        return back()->with('success', 'Chart deleted successfully.');
-    }
+    return redirect()
+        ->route('chart_uploads.index')
+        ->with('success', 'Chart PDF deleted successfully.');
+}
 }
 
 

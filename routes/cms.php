@@ -304,5 +304,21 @@ Route::prefix('chart-uploads')->group(function () {
         'uses' => 'cms\ChartUploadController@store',
         'as' => 'chart_uploads.store',
     ]);
+ Route::get('/edit/{id}', [
+        'uses' => 'cms\ChartUploadController@edit',
+        'as' => 'chart_uploads.edit',
+    ]);
 
+     Route::put('/update/{id}', [
+        'uses' => 'cms\ChartUploadController@update',
+        'as' => 'chart_uploads.update',
+    ]);
+
+     Route::delete('/delete/{id}', [
+        'uses' => 'cms\ChartUploadController@destroy',
+        'as' => 'chart_uploads.destroy',
+    ]);
+
+
+  
 });
