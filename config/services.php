@@ -40,4 +40,11 @@ return [
         ],
     ],
 
+    'rag' => [
+        'url' => env('RAG_API_URL', 'http://127.0.0.1:8000'),
+        'bot_id' => env('RAG_BOT_ID'),
+        'bot_key' => env('RAG_BOT_KEY'),
+        'timeout' => env('RAG_TIMEOUT', 60),
+    ],
+
 ];
